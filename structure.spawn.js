@@ -1,6 +1,6 @@
 const Extension = {
   building: (spawn, top, left, bottom, right) => {
-    const look = spawn.room.lookAtArea(top, left, bottom, right);
+    const look = spawn.room.lookAtArea(top || 0, left || 0, bottom || 49, right || 49);
 
     return Object.keys(look).find(y => !!Object.keys(look[y]).find(x => {
         const area = look[y][x];
@@ -12,20 +12,19 @@ const Extension = {
               && constructionSite.constructionSite
               && constructionSite.constructionSite.structureType == 'extension'
               && constructionSite.constructionSite.progress !== constructionSite.constructionSite.progressTotal) {
-            console.log(JSON.stringify(constructionSite.constructionSite) );
             return true;
           }
 
           return false;
         }
       })
-    });
+    );
   },
   creep: (spawn, x, y) => {
-    const creeps = _.filter(Game.creeps, (creep) => creep.memory.role == 'extension' && creep.memory.targetX == x, creep.memory.targetY == y);
+    const creeps = _.filter(Game.creeps, (creep) => creep.memory.role == 'extension' && creep.memory.targetX == x && creep.memory.targetY == y);
     console.log('Extension Builders: ' + creeps.length);
 
-    if (creeps.length < 2) {
+    if (creeps.length < 3) {
       // get spawn capacity
       const spawnCapacity = spawn.store.getCapacity(RESOURCE_ENERGY) || 300;
 
@@ -41,7 +40,76 @@ const Extension = {
       }
     }
   }
-}
+};
+
+const Upgrader = {
+  creep: (spawn) => {
+    const creeps = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
+    console.log('Upgraders: ' + creeps.length);
+
+    if (creeps.length < 3) {
+      // get spawn capacity
+      const spawnCapacity = spawn.store.getCapacity(RESOURCE_ENERGY) || 300;
+
+      const newName = 'Upgrader ' + Game.time;
+      console.log('Spawning new upgrader: ' + newName);
+
+      if (spawnCapacity > 300) {
+        spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName,
+          {memory: {role: 'upgrader'}});
+      } else {
+        spawn.spawnCreep([WORK, WORK, CARRY, MOVE], newName,
+          {memory: {role: 'upgrader'}});
+      }
+    }
+  }
+};
+
+const Builder = {
+  creep: (spawn) => {
+    const creeps = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
+    console.log('Builders: ' + creeps.length);
+
+    if (creeps.length < 3) {
+      // get spawn capacity
+      const spawnCapacity = spawn.store.getCapacity(RESOURCE_ENERGY) || 300;
+
+      const newName = 'Builder ' + Game.time;
+      console.log('Spawning new builder: ' + newName);
+
+      if (spawnCapacity > 300) {
+        spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName,
+          {memory: {role: 'builder'}});
+      } else {
+        spawn.spawnCreep([WORK, WORK, CARRY, MOVE], newName,
+          {memory: {role: 'builder'}});
+      }
+    }
+  }
+};
+
+const Harvester = {
+  creep: (spawn) => {
+    const creeps = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
+    console.log('Harvesters: ' + creeps.length);
+
+    if (creeps.length < 3) {
+      // get spawn capacity
+      const spawnCapacity = spawn.store.getCapacity(RESOURCE_ENERGY) || 300;
+
+      const newName = 'Harvester ' + Game.time;
+      console.log('Spawning new harvester: ' + newName);
+
+      if (spawnCapacity > 300) {
+        spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName,
+          {memory: {role: 'harvester'}});
+      } else {
+        spawn.spawnCreep([WORK, WORK, CARRY, MOVE], newName,
+          {memory: {role: 'harvester'}});
+      }
+    }
+  }
+};
 
 const structureSpawn = {
   run: (spawn) => {
@@ -70,7 +138,7 @@ const structureSpawn = {
     let blockBuildTick = 0;
 
     Object.keys(lookTerrain).forEach(y => {
-      const extensionBuilding = Extension.building(spawn, top, left, boootm, right);
+      const extensionBuilding = Extension.building(spawn, top, left, bottom, right);
       const findY = y;
       const findX = Object.keys(lookTerrain[y]).find(x => {
         const terrain = lookTerrain[y][x];
@@ -83,7 +151,6 @@ const structureSpawn = {
       });
 
       if (findX && !extensionBuilding && !blockBuildTick) {
-        console.log(findY, findX, isExtensionBuilding);
         spawn.room.createConstructionSite(Number(findX), Number(findY), STRUCTURE_EXTENSION);
 
         blockBuildTick++;
@@ -96,59 +163,11 @@ const structureSpawn = {
       }
     });
 
-    // get spawn capacity
-    const spawnCapacity = spawn.store.getCapacity(RESOURCE_ENERGY) || 300;
+    Upgrader.creep(spawn);
 
-    // auto create upgraders
-    var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
-    console.log('Upgraders: ' + upgraders.length);
+    Builder.creep(spawn);
 
-    if (upgraders.length < 2) {
-        var newName = 'Upgrader' + Game.time;
-        console.log('Spawning new upgrader: ' + newName);
-
-        if (spawnCapacity > 300) {
-          spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName,
-            {memory: {role: 'upgrader'}});
-        } else {
-          spawn.spawnCreep([WORK, WORK, CARRY, MOVE], newName,
-            {memory: {role: 'upgrader'}});
-        }
-    }
-
-    // auto create builders
-    var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
-    console.log('Builders: ' + builders.length);
-
-    if (builders.length < 2) {
-        var newName = 'Builder' + Game.time;
-        console.log('Spawning new builder: ' + newName);
-
-        if (spawnCapacity > 300) {
-          spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName,
-            {memory: {role: 'builder'}});
-        } else {
-          spawn.spawnCreep([WORK, WORK, CARRY, MOVE], newName,
-            {memory: {role: 'builder'}});
-        }
-    }
-
-    // auto create harvesters
-    var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
-    console.log('Harvesters: ' + harvesters.length);
-
-    if (harvesters.length < 2) {
-        var newName = 'Harvester' + Game.time;
-        console.log('Spawning new harvester: ' + newName);
-
-        if (spawnCapacity > 300) {
-          spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName,
-            {memory: {role: 'harvester'}});
-        } else {
-          spawn.spawnCreep([WORK, WORK, CARRY, MOVE], newName,
-            {memory: {role: 'harvester'}});
-        }
-    }
+    Harvester.creep(spawn);
 
     if (spawn.spawning) {
         var spawningCreep = Game.creeps[spawn.spawning.name];
