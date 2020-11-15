@@ -4,38 +4,39 @@ const creepVisualizePathStyle = {
   lineStyle: undefined
 };
 
-const roleBuilder = {
+const roleExtension = {
 
     /** @param {Creep} creep **/
     run: (creep) => {
 
         if (creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.building = false;
-            creep.say('🔄 harvest builder');
+            creep.say('🔄 harvest extension');
         }
 
         if (!creep.memory.building && creep.store.getFreeCapacity() == 0) {
             creep.memory.building = true;
-            creep.say('🚧 build');
+            creep.say('🚧 build extension');
         }
 
         if (creep.memory.building) {
-            const targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+            const pos = creep.room.getPositionAt(creep.memory.targetX, creep.memory.targetY);
+            const target = pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
 
-            if (targets.length) {
-                if (creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {visualizePathStyle: {...creepVisualizePathStyle, stroke: '#ffffff'}});
+            if (target) {
+                if (creep.build(target) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target, {visualizePathStyle: {...creepVisualizePathStyle, stroke: '#F933FF', }});
                 }
             }
         }
         else {
             const sources = creep.room.find(FIND_SOURCES);
-            
+
             if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], {visualizePathStyle: {...creepVisualizePathStyle, stroke: '#ffaa00'}});
+                creep.moveTo(sources[0], {visualizePathStyle: {...creepVisualizePathStyle, stroke: '#FFFFFF'}});
             }
         }
     }
 };
 
-module.exports = roleBuilder;
+module.exports = roleExtension;
