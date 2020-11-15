@@ -1,19 +1,3 @@
-const createExtensionBuilder = (spawn) => {
-  // get spawn capacity
-  const spawnCapacity = spawn.store.getCapacity(RESOURCE_ENERGY) || 300;
-
-  const newName = 'Builder' + Game.time;
-  console.log('Spawning new builder: ' + newName);
-
-  if (spawnCapacity > 300) {
-    spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE], newName,
-      {memory: {role: 'builder'}});
-  } else {
-    spawn.spawnCreep([WORK, WORK, CARRY, MOVE], newName,
-      {memory: {role: 'builder'}});
-  }
-};
-
 const Extension = {
   building: (spawn, top, left, bottom, right) => {
     const look = spawn.room.lookAtArea(top, left, bottom, right);

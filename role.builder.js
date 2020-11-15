@@ -29,8 +29,15 @@ const roleBuilder = {
             }
         }
         else {
-            const sources = creep.room.find(FIND_SOURCES);
-            
+          const sources = creep.room
+            .find(FIND_SOURCES)
+            .map(target => {
+              const path = creep.pos.findPathTo(target);
+              target.pathLength = path.length;
+              return target;
+            })
+            .sort((a, b) => a.pathLength - b.pathLength);
+
             if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(sources[0], {visualizePathStyle: {...creepVisualizePathStyle, stroke: '#ffaa00'}});
             }
