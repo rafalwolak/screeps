@@ -1,15 +1,18 @@
 module.exports = {
 
-    /** @param {Spawn} spawn **/
-    nearest: (spawn) => {
-        return spawn.room.lookForAtArea(LOOK_STRUCTURES, 0, 0, 49, 49, true)
-            .map(area => {
-                const pos = spawn.room.getPositionAt(Number(area.x), Number(area.y));
-                const path = spawn.room.findPath(spawn.pos, pos);
+    /**
+     * @param {Spawn} spawn
+     * @param {string} structureType
+     */
+    nearest: (spawn, structureType) => {
+        return spawn.room.find(FIND_MY_STRUCTURES, {
+            filter: structureType ? { structureType: structureType } : {}
+        })
+            .map(target => {
+                const path = spawn.pos.findPathTo(target);
+                target.pathLength = path.length;
 
-                area.pathLength = path.length;
-
-                return area;
+                return target;
             }).sort((a, b) => a.pathLength - b.pathLength);
     }
 };

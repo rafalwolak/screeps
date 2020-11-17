@@ -28,9 +28,7 @@ module.exports.loop = () => {
     // }
 
     for (const name in Game.spawns) {
-      const spawn = Game.spawns[name];
-
-      structureSpawn.run(spawn);
+      structureSpawn.run(Game.spawns[name]);
     }
 
     for (const name in Game.creeps) {

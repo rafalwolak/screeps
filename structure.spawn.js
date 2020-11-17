@@ -1,3 +1,17 @@
+const Spawn = {
+  message: (spawn) => {
+    if (spawn.spawning) {
+        const spawningCreep = Game.creeps[spawn.spawning.name];
+    
+        spawn.room.visual.text(
+            '🛠️' + spawningCreep.memory.role,
+            spawn.pos.x + 1,
+            spawn.pos.y,
+            {align: 'left', opacity: 0.8});
+    }
+  }
+};
+
 const Extension = {
   building: (spawn, top, left, bottom, right) => {
     const look = spawn.room.lookAtArea(top || 0, left || 0, bottom || 49, right || 49);
@@ -169,15 +183,7 @@ const structureSpawn = {
 
     Harvester.creep(spawn);
 
-    if (spawn.spawning) {
-        var spawningCreep = Game.creeps[spawn.spawning.name];
-
-        spawn.room.visual.text(
-            '🛠️' + spawningCreep.memory.role,
-            spawn.pos.x + 1,
-            spawn.pos.y,
-            {align: 'left', opacity: 0.8});
-    }
+    Spawn.message(spawn);
   }
 }
 

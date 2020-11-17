@@ -1,9 +1,13 @@
-const extensionsLimit = CONTROLLER_STRUCTURES.extension[roomLevel];
-
 module.exports = {
 
-    /** @param {Spawn} spawn **/
+    /**
+     * @param {Spawn} spawn
+     */
     nearest: (spawn) => {
+
+        const roomLevel = spawn.room.controller.level;
+        const extensionsLimit = CONTROLLER_STRUCTURES.extension[roomLevel];
+
         const top = spawn.pos.y - extensionsLimit;
         const left = spawn.pos.x - extensionsLimit;
         const bottom = top + extensionsLimit * 2;

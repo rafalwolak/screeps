@@ -5,6 +5,7 @@ module.exports = {
       .map(target => {
         const path = creep.pos.findPathTo(target);
         target.pathLength = path.length;
+        
         return target;
       })
       .sort((a, b) => a.pathLength - b.pathLength);
